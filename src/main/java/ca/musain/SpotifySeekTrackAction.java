@@ -17,7 +17,7 @@ public class SpotifySeekTrackAction extends NormalAction {
         setAuthor("dmf444");
         setHelpLink("https://github.com/spotify");
         setVisibilityInServerSettingsPane(false);
-        setVersion(new Version(1,0,0));
+        setVersion(new Version(1,1,0));
     }
 
     @Override

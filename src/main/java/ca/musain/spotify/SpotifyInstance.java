@@ -1,5 +1,6 @@
 package ca.musain.spotify;
 
+import ca.musain.SpotifyAction;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -78,6 +79,7 @@ public class SpotifyInstance {
 
         this.getAPI().setAccessToken(creds.getAccessToken());
         this.getAPI().setRefreshToken(creds.getRefreshToken());
+        SpotifyAction.spotifyAction.credentialsUpdated();
     }
 
     public void initCredentialsConfig(CredentialModel model) {

@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 
 public class SpotifyAction extends NormalAction {
 
+    public static SpotifyAction spotifyAction;
     private Button initializeBtn;
     private Button connectionStatus;
 
@@ -24,7 +25,7 @@ public class SpotifyAction extends NormalAction {
         setAuthor("dmf444");
         setHelpLink("https://github.com/spotify");
         setVisibilityInPluginsPane(false);
-        setVersion(new Version(1,0,2));
+        setVersion(new Version(1,0,0));
 
         initializeBtn = new Button("Link Spotify Account");
         connectionStatus = new Button("Disconnected");
@@ -32,6 +33,8 @@ public class SpotifyAction extends NormalAction {
         connectionStatus.setStyle("-fx-text-fill: #ff0000");
         buttonActionSetup();
         setServerSettingsButtonBar(initializeBtn, connectionStatus);
+
+        SpotifyAction.spotifyAction = this;
     }
 
     @Override
@@ -74,13 +77,17 @@ public class SpotifyAction extends NormalAction {
         }
     }
 
-    public void onShutDown() throws MinorException {
+    public void credentialsUpdated() {
         CredentialModel credentials = SpotifyInstance.getInstance().getCredentials();
         if(credentials != null) {
-            getServerProperties().getSingleProperty("access_token").setStringValue(credentials.getAccessToken());
-            getServerProperties().getSingleProperty("expire_time").setStringValue(credentials.getLocalDateTime());
-            getServerProperties().getSingleProperty("refresh_token").setStringValue(credentials.getRefreshToken());
-            saveServerProperties();
+            try {
+                getServerProperties().getSingleProperty("access_token").setStringValue(credentials.getAccessToken());
+                getServerProperties().getSingleProperty("expire_time").setStringValue(credentials.getLocalDateTime());
+                getServerProperties().getSingleProperty("refresh_token").setStringValue(credentials.getRefreshToken());
+                saveServerProperties();
+            } catch (MinorException e) {
+                //Do nothing...
+            }
         }
     }
 

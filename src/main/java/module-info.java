@@ -8,5 +8,5 @@ module ca.musain.spotify {
 
     exports ca.musain.spotify;
 
-    provides com.stream_pi.action_api.externalplugin.ExternalPlugin with ca.musain.SpotifyAction, ca.musain.SpotifySeekTrackAction, ca.musain.PlayPauseAction;
+    provides com.stream_pi.action_api.externalplugin.ExternalPlugin with ca.musain.SpotifyAction, ca.musain.SpotifySeekTrackAction, ca.musain.PlayPauseAction, ca.musain.SpotifyShuffleAction;
 }

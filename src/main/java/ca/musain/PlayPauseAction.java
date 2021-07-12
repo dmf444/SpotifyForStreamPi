@@ -12,14 +12,16 @@ import com.wrapper.spotify.requests.data.player.StartResumeUsersPlaybackRequest;
 
 public class PlayPauseAction extends ToggleAction {
 
+    private boolean liveStatus;
+
     public PlayPauseAction() {
         setName("Play/Pause Current Track");
         setCategory("Spotify");
         setAuthor("dmf444");
         setHelpLink("https://github.com/spotify");
         setVisibilityInServerSettingsPane(false);
-        setVersion(new Version(1,0,2));
-
+        setVersion(new Version(1,2,0));
+        liveStatus = false;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class PlayPauseAction extends ToggleAction {
             try {
                 instance.renewTokenIfNeeded();
                 CurrentlyPlayingContext context = instance.getAPI().getInformationAboutUsersCurrentPlayback().build().execute();
-                setCurrentToggleStatus(context.getIs_playing());
+                this.liveStatus = context.getIs_playing();
             } catch (Exception e) {
                 throw new MinorException(e.getMessage());
             }
@@ -39,12 +41,15 @@ public class PlayPauseAction extends ToggleAction {
     @Override
     public void onToggleOn() throws MinorException {
         if(SpotifyInstance.getInstance().isEnabled()) {
-            SpotifyApi api = SpotifyInstance.getInstance().getAPI();
-            try {
-                StartResumeUsersPlaybackRequest request = api.startResumeUsersPlayback().build();
-                SpotifyInstance.getInstance().createRequest(request);
-            } catch (Exception e) {
-                throw new MinorException(e.getMessage());
+            if(liveStatus) {
+                SpotifyApi api = SpotifyInstance.getInstance().getAPI();
+                try {
+                    StartResumeUsersPlaybackRequest request = api.startResumeUsersPlayback().build();
+                    SpotifyInstance.getInstance().createRequest(request);
+                    liveStatus = false;
+                } catch (Exception e) {
+                    throw new MinorException(e.getMessage());
+                }
             }
         } else {
             throw new MinorException("You are not logged into spotify!");
@@ -54,12 +59,15 @@ public class PlayPauseAction extends ToggleAction {
     @Override
     public void onToggleOff() throws MinorException {
         if(SpotifyInstance.getInstance().isEnabled()) {
-            SpotifyApi api = SpotifyInstance.getInstance().getAPI();
-            try {
-                PauseUsersPlaybackRequest request = api.pauseUsersPlayback().build();
-                SpotifyInstance.getInstance().createRequest(request);
-            } catch (Exception e) {
-                throw new MinorException(e.getMessage());
+            if(!liveStatus) {
+                SpotifyApi api = SpotifyInstance.getInstance().getAPI();
+                try {
+                    PauseUsersPlaybackRequest request = api.pauseUsersPlayback().build();
+                    SpotifyInstance.getInstance().createRequest(request);
+                    liveStatus = true;
+                } catch (Exception e) {
+                    throw new MinorException(e.getMessage());
+                }
             }
         }else {
             throw new MinorException("You are not logged into spotify!");
