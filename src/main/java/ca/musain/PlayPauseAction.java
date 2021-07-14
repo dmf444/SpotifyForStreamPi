@@ -29,8 +29,10 @@ public class PlayPauseAction extends ToggleAction {
         SpotifyInstance instance = SpotifyInstance.getInstance();
         if(instance.isEnabled()) {
             try {
-                instance.renewTokenIfNeeded();
+                /*instance.renewTokenIfNeeded();
                 CurrentlyPlayingContext context = instance.getAPI().getInformationAboutUsersCurrentPlayback().build().execute();
+                this.liveStatus = context.getIs_playing();*/
+                CurrentlyPlayingContext context = instance.quickRequest();
                 this.liveStatus = context.getIs_playing();
             } catch (Exception e) {
                 throw new MinorException(e.getMessage());

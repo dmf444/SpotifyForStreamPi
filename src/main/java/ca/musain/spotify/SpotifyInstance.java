@@ -4,7 +4,9 @@ import ca.musain.SpotifyAction;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
 import com.wrapper.spotify.requests.data.AbstractDataRequest;
+import com.wrapper.spotify.requests.data.player.GetInformationAboutUsersCurrentPlaybackRequest;
 import java.net.URI;
 
 public class SpotifyInstance {
@@ -13,6 +15,7 @@ public class SpotifyInstance {
     private SpotifyApi api;
     private SpotifyPKCERequest initialRequest;
     private CredentialModel credentials;
+    private CurrentlyPlayingContext context;
 
     private SpotifyInstance() {
         api = new SpotifyApi.Builder()
@@ -39,6 +42,15 @@ public class SpotifyInstance {
             updateCredentials(creds);
         }
         return (T) request.execute();
+    }
+
+    public CurrentlyPlayingContext quickRequest() throws Exception {
+        if(context == null) {
+            instance.renewTokenIfNeeded();
+            GetInformationAboutUsersCurrentPlaybackRequest infoReq = instance.getAPI().getInformationAboutUsersCurrentPlayback().build();
+            this.context = infoReq.execute();
+        }
+        return context;
     }
 
     public void renewTokenIfNeeded() throws Exception {

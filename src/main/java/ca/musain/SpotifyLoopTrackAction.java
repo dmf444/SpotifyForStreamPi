@@ -4,12 +4,12 @@ import ca.musain.spotify.SpotifyInstance;
 import com.stream_pi.util.exception.MinorException;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.miscellaneous.CurrentlyPlayingContext;
-import com.wrapper.spotify.requests.data.player.ToggleShuffleForUsersPlaybackRequest;
+import com.wrapper.spotify.requests.data.player.SetRepeatModeOnUsersPlaybackRequest;
 
-public class SpotifyShuffleAction extends ToggleActionExtended {
+public class SpotifyLoopTrackAction extends ToggleActionExtended {
 
-    public SpotifyShuffleAction() {
-        setName("Toggle Shuffle");
+    public SpotifyLoopTrackAction() {
+        setName("Loop Track");
     }
 
     @Override
@@ -18,7 +18,7 @@ public class SpotifyShuffleAction extends ToggleActionExtended {
         if(instance.isEnabled()) {
             try {
                 CurrentlyPlayingContext context = instance.quickRequest();
-                return context.getShuffle_state();
+                return context.getRepeat_state().equals("track");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -31,9 +31,9 @@ public class SpotifyShuffleAction extends ToggleActionExtended {
         if(SpotifyInstance.getInstance().isEnabled()) {
             if(this.getToggleState()) return;
 
-            Boolean execState = this.buildExecuteToggle(true);
-            if(execState != null) {
-                this.setToggleState(execState);
+            boolean execState = this.buildExecuteToggle("track");
+            if(execState) {
+                this.setToggleState(true);
             } else {
                 throw new MinorException("Unable to toggle shuffle.");
             }
@@ -45,24 +45,26 @@ public class SpotifyShuffleAction extends ToggleActionExtended {
         if(SpotifyInstance.getInstance().isEnabled()) {
             if(!this.getToggleState()) return;
 
-            Boolean execState = this.buildExecuteToggle(false);
-            if(execState != null) {
-                this.setToggleState(execState);
+            boolean execState = this.buildExecuteToggle("off");
+            if(execState) {
+                this.setToggleState(false);
             } else {
                 throw new MinorException("Unable to toggle shuffle.");
             }
         }
     }
 
-    private Boolean buildExecuteToggle(boolean newState) {
+
+    private boolean buildExecuteToggle(String newState) {
         SpotifyApi api = SpotifyInstance.getInstance().getAPI();
         try {
-            ToggleShuffleForUsersPlaybackRequest request = api.toggleShuffleForUsersPlayback(newState).build();
+            SetRepeatModeOnUsersPlaybackRequest request = api.setRepeatModeOnUsersPlayback(newState).build();
             SpotifyInstance.getInstance().createRequest(request);
-            return newState;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
+
 }

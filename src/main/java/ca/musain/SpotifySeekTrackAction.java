@@ -15,7 +15,7 @@ public class SpotifySeekTrackAction extends NormalAction {
         setName("Track Skip");
         setCategory("Spotify");
         setAuthor("dmf444");
-        setHelpLink("https://github.com/spotify");
+        setHelpLink("https://github.com/dmf444/SpotifyForStreamPi");
         setVisibilityInServerSettingsPane(false);
         setVersion(new Version(1,1,0));
     }

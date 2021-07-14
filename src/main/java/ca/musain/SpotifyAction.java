@@ -23,7 +23,7 @@ public class SpotifyAction extends NormalAction {
         setName("Spotify Playback Plugin");
         setCategory("Spotify");
         setAuthor("dmf444");
-        setHelpLink("https://github.com/spotify");
+        setHelpLink("https://github.com/dmf444/SpotifyForStreamPi");
         setVisibilityInPluginsPane(false);
         setVersion(new Version(1,0,0));
 
